@@ -7,7 +7,6 @@ use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Client\Common\Plugin\HeaderSetPlugin;
-use Http\Client\Common\HttpMethodsClient;
 use Http\Message\Authentication\Wsse;
 
 abstract class JsonRpc
@@ -54,7 +53,7 @@ abstract class JsonRpc
 
     private function getClient()
     {
-        return new HttpMethodsClient(new PluginClient(HttpClientDiscovery::find(), $this->getPlugins()));
+        return new PluginClient(HttpClientDiscovery::find(), $this->getPlugins());
     }
 
     private function getRequest($method, $parameters)
