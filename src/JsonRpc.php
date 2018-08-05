@@ -66,7 +66,7 @@ abstract class JsonRpc
             'params' => $parameters,
         ];
         $messageFactory = MessageFactoryDiscovery::find();
-        return $messageFactory->createRequest('POST', $this->url, [], $json);
+        return $messageFactory->createRequest('POST', $this->url, [], json_encode($json));
     }
 
     public function request($method, array $parameters = [])
