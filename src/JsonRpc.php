@@ -2,12 +2,13 @@
 
 namespace Submtd\MoneroPhp;
 
-use Http\Message\Authentication\BasicAuth;
 use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Client\Common\Plugin\HeaderSetPlugin;
+use Http\Client\Common\HttpMethodsClient;
+use Http\Message\Authentication\Wsse;
 
 abstract class JsonRpc
 {
@@ -41,8 +42,7 @@ abstract class JsonRpc
 
     private function getAuthenticationPlugin()
     {
-        $authentication = new BasicAuth($this->username, $this->password);
-        return new AuthenticationPlugin($authentication);
+        return new AuthenticationPlugin(new Wsse($this->username, $this->password));
     }
 
     private function getHeaderPlugin()
@@ -54,14 +54,14 @@ abstract class JsonRpc
 
     private function getClient()
     {
-        return new PluginClient(HttpClientDiscovery::find(), $this->getPlugins());
+        return new HttpMethodsClient(new PluginClient(HttpClientDiscovery::find(), $this->getPlugins()));
     }
 
     private function getRequest($method, $parameters)
     {
         $json = [
             'jsonrpc' => '2.0',
-            'id' => rand(1, 10000),
+            'id' => 0,
             'method' => $method,
             'params' => $parameters,
         ];
