@@ -2,9 +2,9 @@
 
 namespace Submtd\MoneroPhp;
 
-class WalletRpc extends JsonRpc
+class Wallet extends JsonRpc
 {
-    public function getBalance($account_index)
+    public function getBalance($account_index = 0)
     {
         return $this->request('getbalance', ['account_index' => $account_index]);
     }
