@@ -71,6 +71,7 @@ abstract class JsonRpc
 
     public function getLastError()
     {
+        $errors = $this->getErrors();
         return end($this->getErrors());
     }
 
