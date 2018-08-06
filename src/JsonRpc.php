@@ -95,13 +95,19 @@ abstract class JsonRpc
         $messageFactory = MessageFactoryDiscovery::find();
         $request = $messageFactory->createRequest('POST', $this->url, ['Content-Type' => 'application/json'], json_encode($json));
         $client = HttpClientDiscovery::find();
-        $result = $client->sendRequest($request);
-        $this->updateStatus($result->getStatusCode(), $result->getReasonPhrase());
-        if ($this->getStatusCode() != 200) {
+        try {
+            $result = $client->sendRequest($request);
+            $this->updateStatus($result->getStatusCode(), $result->getReasonPhrase());
+            if ($this->getStatusCode() != 200) {
+                $this->addError($this->getStatusCode(), $this->getStatusMessage());
+                return false;
+            }
+            $this->updateContent($result->getBody()->getContents());
+            return $this->getContent();
+        } catch (\Exception $e) {
+            $this->updateStatus($e->getCode(), $e->getMessage());
             $this->addError($this->getStatusCode(), $this->getStatusMessage());
             return false;
         }
-        $this->updateContent($result->getBody()->getContents());
-        return $this->getContent();
     }
 }
